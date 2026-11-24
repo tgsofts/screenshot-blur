@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop & Blur Image Online Free – Redact Sensitive Info & Remove Backgrounds Locally</title>
+  <meta name="description" content="Free private browser tool to crop photos, trim document edges, and blur or redact sensitive information in screenshots. 100% offline—images never leave your device.">
+  <meta name="keywords" content="blur screenshot online, crop document photo, redact image free, hide sensitive info in image, pixelate photo online, private image cropper">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tgsofts.github.io/screenshot-blur/">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #10b981;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      font-size: 13.5px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .brand {
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      background: #eff6ff;
+      padding: 5px 12px;
+      border-radius: 999px;
+      transition: background 0.15s;
+    }
+    .nav-links a:hover { background: #dbeafe; }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    header p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 660px;
+      margin: 0 auto;
+    }
+    .toolbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tool-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .btn:hover:not(:disabled) { background: #f1f5f9; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+    .btn-success:hover:not(:disabled) { background: #059669; }
+    .workspace {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .drop-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 48px 24px;
+      text-align: center;
+      width: 100%;
+      max-width: 560px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .drop-zone h3 {
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+    }
+    .drop-zone p {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .canvas-wrapper {
+      display: none;
+      max-width: 100%;
+      overflow: auto;
+      text-align: center;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .hint-bar {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .seo-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+    .seo-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 14px;
+    }
+    @media (max-width: 768px) {
+      .faq-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.65rem; }
+    }
+    .faq-item h3 { font-size: 0.98rem; margin-bottom: 5px; }
+    .faq-item p { font-size: 0.9rem; color: var(--muted); }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-bottom: 20px;
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="top-nav">
+    <a href="https://tgsofts.github.io/" class="brand">TgSofts Utilities</a>
+    <div class="nav-links">
+      <a href="https://tgsofts.github.io/ai-text-cleaner/">AI Cleaner</a>
+      <a href="https://tgsofts.github.io/word-counter/">Word Counter</a>
+      <a href="https://tgsofts.github.io/qr-generator/">QR Generator</a>
+    </div>
+  </nav>
+
+  <header>
+    <span class="badge">100% Private &bull; Images Never Leave Your Device</span>
+    <h1>Crop & Blur Image Online</h1>
+    <p>Trim messy table edges around photographed documents or blur sensitive ID numbers, emails, and faces in seconds.</p>
+  </header>
+
+  <div class="toolbar">
+    <div class="tool-group">
+      <input type="file" id="fileInput" accept="image/*" style="display:none;">
+      <button class="btn" onclick="document.getElementById('fileInput').click()">Open Image</button>
+      <button class="btn active" id="modeCrop" onclick="setMode('crop')">1. Crop Edges</button>
+      <button class="btn" id="modeBlur" onclick="setMode('blur')">2. Blur Area</button>
+      <button class="btn" id="modeBlack" onclick="setMode('black')">3. Blackout Box</button>
+    </div>
+
+    <div class="tool-group">
+      <button class="btn" id="applyCropBtn" onclick="applyCrop()" style="display:none; background:#dbeafe; color:#1d4ed8; border-color:#93c5fd;">Apply Crop</button>
+      <button class="btn" id="undoBtn" onclick="undo()" disabled>Undo</button>
+      <button class="btn btn-success" id="downloadBtn" onclick="downloadImage()" disabled>Download PNG</button>
+    </div>
+  </div>
+
+  <div class="workspace" id="workspace">
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <h3>Click to Upload, Drag & Drop, or Press Ctrl+V</h3>
+      <p>Supports JPG, PNG, and WebP. All cropping and blurring runs 100% locally in your browser.</p>
+    </div>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="editorCanvas"></canvas>
+      <div class="hint-bar" id="hintBar">Drag a box around your diploma or document, then click "Apply Crop".</div>
+    </div>
+  </div>
+
+  <section class="seo-section">
+    <h2>How to Crop Document Photos & Blur Sensitive Info Safely</h2>
+    <p style="color: var(--muted); font-size: 0.95rem;">
+      When photographing a diploma, ID card, or receipt on a desk, extra background clutter often sneaks into the frame. Use <strong>Crop Edges</strong> to frame just your document cleanly, then switch to <strong>Blur Area</strong> or <strong>Blackout Box</strong> to hide personal numbers before sending.
+    </p>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h3>Are my diplomas or screenshots uploaded to a server?</h3>
+        <p>No. Every pixel is edited directly on an HTML5 Canvas inside your own browser. Nothing is ever uploaded, logged, or stored online.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I paste a screenshot directly?</h3>
+        <p>Yes! Take a screenshot on Windows (Win+Shift+S) or Mac (Cmd+Ctrl+Shift+4) and press <strong>Ctrl+V</strong> (or Cmd+V) anywhere on this page.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Built by <a href="https://tgsofts.github.io/" target="_blank" rel="noopener">TgSofts</a> &bull;
+    More Tools: <a href="https://tgsofts.github.io/json-formatter/">JSON Formatter</a> &bull;
+    <a href="https://tgsofts.github.io/password-generator/">Password Generator</a> &bull;
+    <a href="https://tgsofts.github.io/text-compare/">Text Compare</a>
+  </footer>
+</div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const dropZone = document.getElementById('dropZone');
+  const canvasWrapper = document.getElementById('canvasWrapper');
+  const canvas = document.getElementById('editorCanvas');
+  const ctx = canvas.getContext('2d');
+  const hintBar = document.getElementById('hintBar');
+  const applyCropBtn = document.getElementById('applyCropBtn');
+  const undoBtn = document.getElementById('undoBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  let mode = 'crop';
+  let isDrawing = false;
+  let startX = 0, startY = 0, currX = 0, currY = 0;
+  let cropRect = null;
+  let history = [];
+  let baseSnapshot = null;
+
+  function setMode(newMode) {
+    mode = newMode;
+    cropRect = null;
+    applyCropBtn.style.display = 'none';
+    document.querySelectorAll('.toolbar .btn').forEach(b => b.classList.remove('active'));
+    if (mode === 'crop') {
+      document.getElementById('modeCrop').classList.add('active');
+      hintBar.textContent = 'Drag a rectangle around the area you want to keep, then click "Apply Crop".';
+    } else if (mode === 'blur') {
+      document.getElementById('modeBlur').classList.add('active');
+      hintBar.textContent = 'Click and drag over any sensitive text, ID number, or face to blur it.';
+    } else {
+      document.getElementById('modeBlack').classList.add('active');
+      hintBar.textContent = 'Click and drag over any area to cover it with a solid black redaction box.';
+    }
+    if (baseSnapshot) ctx.putImageData(baseSnapshot, 0, 0);
+  }
+
+  function saveState() {
+    if (canvas.width === 0) return;
+    history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    if (history.length > 15) history.shift();
+    undoBtn.disabled = history.length <= 1;
+  }
+
+  function undo() {
+    if (history.length <= 1) return;
+    history.pop();
+    const prev = history[history.length - 1];
+    canvas.width = prev.width;
+    canvas.height = prev.height;
+    ctx.putImageData(prev, 0, 0);
+    baseSnapshot = prev;
+    cropRect = null;
+    applyCropBtn.style.display = 'none';
+    undoBtn.disabled = history.length <= 1;
+  }
+
+  function loadImageFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        history = [];
+        saveState();
+        baseSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        dropZone.style.display = 'none';
+        canvasWrapper.style.display = 'block';
+        downloadBtn.disabled = false;
+        cropRect = null;
+        applyCropBtn.style.display = 'none';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  fileInput.addEventListener('change', e => loadImageFile(e.target.files[0]));
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) loadImageFile(e.dataTransfer.files[0]);
+  });
+
+  window.addEventListener('paste', e => {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (let item of items) {
+      if (item.type.indexOf('image') !== -1) {
+        loadImageFile(item.getAsFile());
+      }
+    }
+  });
+
+  function getCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+      x: Math.max(0, Math.min(canvas.width, (clientX - rect.left) * scaleX)),
+      y: Math.max(0, Math.min(canvas.height, (clientY - rect.top) * scaleY))
+    };
+  }
+
+  function startDrag(e) {
+    if (!baseSnapshot) return;
+    e.preventDefault();
+    const pos = getCoords(e);
+    startX = pos.x;
+    startY = pos.y;
+    currX = pos.x;
+    currY = pos.y;
+    isDrawing = true;
+  }
+
+  function moveDrag(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const pos = getCoords(e);
+    currX = pos.x;
+    currY = pos.y;
+
+    ctx.putImageData(baseSnapshot, 0, 0);
+    const x = Math.min(startX, currX);
+    const y = Math.min(startY, currY);
+    const w = Math.abs(currX - startX);
+    const h = Math.abs(currY - startY);
+
+    if (mode === 'crop') {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.45)';
+      ctx.fillRect(0, 0, canvas.width, y);
+      ctx.fillRect(0, y + h, canvas.width, canvas.height - (y + h));
+      ctx.fillRect(0, y, x, h);
+      ctx.fillRect(x + w, y, canvas.width - (x + w), h);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = Math.max(2, canvas.width / 350);
+      ctx.strokeRect(x, y, w, h);
+    } else {
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = Math.max(2, canvas.width / 350);
+      ctx.strokeRect(x, y, w, h);
+    }
+  }
+
+  function endDrag() {
+    if (!isDrawing) return;
+    isDrawing = false;
+    const x = Math.round(Math.min(startX, currX));
+    const y = Math.round(Math.min(startY, currY));
+    const w = Math.round(Math.abs(currX - startX));
+    const h = Math.round(Math.abs(currY - startY));
+
+    if (w < 8 || h < 8) {
+      ctx.putImageData(baseSnapshot, 0, 0);
+      return;
+    }
+
+    if (mode === 'crop') {
+      cropRect = { x, y, w, h };
+      applyCropBtn.style.display = 'inline-block';
+    } else if (mode === 'black') {
+      ctx.putImageData(baseSnapshot, 0, 0);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(x, y, w, h);
+      baseSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      saveState();
+    } else if (mode === 'blur') {
+      ctx.putImageData(baseSnapshot, 0, 0);
+      applyPixelBlur(x, y, w, h);
+      baseSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      saveState();
+    }
+  }
+
+  function applyPixelBlur(x, y, w, h) {
+    const blockSize = Math.max(10, Math.round(Math.min(w, h) / 6));
+    const imgData = ctx.getImageData(x, y, w, h);
+    const data = imgData.data;
+
+    for (let py = 0; py < h; py += blockSize) {
+      for (let px = 0; px < w; px += blockSize) {
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let dy = 0; dy < blockSize && py + dy < h; dy++) {
+          for (let dx = 0; dx < blockSize && px + dx < w; dx++) {
+            const idx = ((py + dy) * w + (px + dx)) * 4;
+            r += data[idx];
+            g += data[idx + 1];
+            b += data[idx + 2];
+            count++;
+          }
+        }
+        r = Math.round(r / count);
+        g = Math.round(g / count);
+        b = Math.round(b / count);
+        for (let dy = 0; dy < blockSize && py + dy < h; dy++) {
+          for (let dx = 0; dx < blockSize && px + dx < w; dx++) {
+            const idx = ((py + dy) * w + (px + dx)) * 4;
+            data[idx] = r;
+            data[idx + 1] = g;
+            data[idx + 2] = b;
+          }
+        }
+      }
+    }
+    ctx.putImageData(imgData, x, y);
+  }
+
+  function applyCrop() {
+    if (!cropRect) return;
+    ctx.putImageData(baseSnapshot, 0, 0);
+    const cropped = ctx.getImageData(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
+    canvas.width = cropRect.w;
+    canvas.height = cropRect.h;
+    ctx.putImageData(cropped, 0, 0);
+    baseSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    saveState();
+    cropRect = null;
+    applyCropBtn.style.display = 'none';
+  }
+
+  function downloadImage() {
+    const link = document.createElement('a');
+    link.download = 'cleaned-image-tgsofts.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  canvas.addEventListener('mousedown', startDrag);
+  window.addEventListener('mousemove', moveDrag);
+  window.addEventListener('mouseup', endDrag);
+
+  canvas.addEventListener('touchstart', startDrag, { passive: false });
+  canvas.addEventListener('touchmove', moveDrag, { passive: false });
+  window.addEventListener('touchend', endDrag);
+</script>
+
+</body>
+</html>
